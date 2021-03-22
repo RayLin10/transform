@@ -33,9 +33,62 @@ See the file script for an example of the file format
 """
 
 def parse_file(fname, points, transform, screen, color):
-    f = open(fname, 'r')
-    for x in f:
+      f = open(fname, 'r')
+      line = f.readlines()
 
+      index = 0
+      while (index < len(line)):
 
-    f.close()
-    pass
+            l = line[index].strip('\n')
+            if l == "line":
+                  index += 1
+                  cords = line[index].strip('\n').split()
+                  cords = [int(x) for x in cords]
+                  add_edge(points, cords[0], cords[1], cords[2], cords[3], cords[4], cords[5])
+            elif l == "ident":
+                  ident(transform)
+            elif l == "scale":
+                  index += 1
+                  factor = line[index].strip('\n').split()
+                  factor = [int(x) for x in factor]
+                  m = make_scale(factor[0], factor[1], factor[2])
+                  matrix_mult(m, transform)
+            elif l == "move":
+                  index += 1
+                  unit = line[index].strip('\n').split()
+                  unit = [int(x) for x in unit]
+                  m = make_translate(unit[0], unit[1], unit[2])
+                  matrix_mult(m, transform)
+            elif l == "rotate":
+                  index += 1
+                  param = line[index].strip('\n').split()
+                  if param[0] == 'x':
+                        m = make_rotX(int(param[1]))
+                        matrix_mult(m, transform)
+                  elif param[0] == 'y':
+                        m = make_rotY(int(param[1]))
+                        matrix_mult(m, transform)
+                  elif param[0] == 'z':
+                        m = make_rotZ(int(param[1]))
+                        matrix_mult(m, transform)
+            elif l == "apply":
+                  matrix_mult(transform, points)
+            elif l == "display":
+                  clear_screen(screen)
+                  for x in range(len(points)):
+                        for y in range(len(points[0])):
+                              points[x][y] = int(points[x][y])
+                  draw_lines(points, screen, color)
+                  display(screen)
+            elif l == "save":
+                  index += 1
+                  fname = line[index].strip('\n')
+                  clear_screen(screen)
+                  for x in range(len(points)):
+                        for y in range(len(points[0])):
+                              points[x][y] = int(points[x][y])
+                  draw_lines(points, screen, color)
+                  save_extension(screen, fname)
+            index += 1
+
+      f.close()

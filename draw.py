@@ -2,21 +2,29 @@ from display import *
 from matrix import *
 
 
-def draw_lines(matrix, screen, color):
-    size = len(matrix[0])
-
-    for p in range(0, size, 2):
-        draw_line(matrix[0][p], matrix[1][p], matrix[0][p + 1], matrix[1][p + 1], screen, color)
-
-def add_edge(matrix, x0, y0, z0, x1, y1, z1):
+def draw_lines( matrix, screen, color ):
+    if len(matrix) < 2:
+        print('Need at least 2 points to draw')
+        return
+    
+    point = 0
+    while point < len(matrix) - 1:
+        draw_line( matrix[point][0],
+                   matrix[point][1],
+                   matrix[point+1][0],
+                   matrix[point+1][1],
+                   screen, color)    
+        point+= 2
+        
+def add_edge( matrix, x0, y0, z0, x1, y1, z1 ):
     add_point(matrix, x0, y0, z0)
     add_point(matrix, x1, y1, z1)
+    
+def add_point( matrix, x, y, z=0 ):
+    matrix.append( [x, y, z, 1] )
+    
 
-def add_point(matrix, x, y, z=0):
-    matrix[0].append(x)
-    matrix[1].append(y)
-    matrix[2].append(z)
-    matrix[3].append(1)
+
 
 def draw_line( x0, y0, x1, y1, screen, color ):
 
